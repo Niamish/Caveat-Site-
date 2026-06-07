@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Caveat — the fine print, read for you</title>
+<meta name="description" content="Caveat reads the contract before you sign it, and flags every clause that bites." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ---------- TIER 1 baseline ---------- */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden; }
+img { max-width:100%; display:block; }
+
+:root{
+  --paper:#f4f0e5;
+  --paper-2:#ede7d8;
+  --ink:#181309;
+  --ink-soft:rgba(24,19,9,.64);
+  --ink-faint:rgba(24,19,9,.62);  /* labels/captions — AA on paper (~4.6:1) */
+  --rule:rgba(24,19,9,.16);
+  --rule-2:rgba(24,19,9,.28);
+
+  --bite:#9c2a1d;       /* clauses that bite — oxblood */
+  --caution:#825912;    /* needs attention — amber (AA as text ~5.4:1) */
+  --standard:#566b3f;   /* market-standard — sage */
+
+  --stick:72px;         /* unified sticky-rail + scroll anchor */
+
+  --font-display:"Libre Caslon Display", Georgia, serif;
+  --font-serif:"Newsreader", Georgia, serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, monospace;
+
+  --col-doc: 660px;
+}
+
+::selection{ background:var(--ink); color:var(--paper); }
+:focus-visible{ outline:2px solid var(--bite); outline-offset:3px; }
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.01ms!important; transition-duration:.01ms!important; }
+}
+
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-serif);
+  font-size:18px;
+  line-height:1.62;
+  font-optical-sizing:auto;
+  position:relative;
+}
+/* paper grain + a faint vertical ledger rule down the page */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:1; opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+
+/* ---------- top banner ---------- */
+.banner{
+  position:sticky; top:0; z-index:40;
+  display:flex; justify-content:space-between; align-items:center;
+  gap:16px; padding:11px clamp(16px,4vw,40px);
+  background:var(--ink); color:var(--paper);
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+}
+.banner .b-left{ display:flex; align-items:center; gap:14px; }
+.banner .seal{
+  width:18px; height:18px; border:1.5px solid var(--paper); border-radius:50%;
+  display:grid; place-items:center; font-size:9px; letter-spacing:0; font-weight:500;
+}
+.banner .b-right{ color:rgba(244,240,229,.62); }
+@media(max-width:640px){ .banner .b-right{ display:none; } }
+
+/* ---------- shell ---------- */
+.wrap{ position:relative; z-index:2; max-width:1320px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
+
+/* ---------- masthead / cover sheet ---------- */
+.cover{ padding:clamp(56px,9vh,120px) 0 clamp(40px,6vh,72px); }
+.cover-kicker{
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.28em; text-transform:uppercase;
+  color:var(--bite); margin-bottom:26px;
+}
+.wordmark{
+  font-family:var(--font-display);
+  font-size:clamp(76px,15vw,184px); line-height:.86; letter-spacing:-.01em;
+}
+.wordmark .dot{ color:var(--bite); }
+.cover-line{
+  font-size:clamp(22px,3vw,34px); line-height:1.28; max-width:20ch;
+  margin:28px 0 0; font-weight:300;
+}
+.cover-line em{ font-style:italic; }
+.cover-foot{
+  display:grid; grid-template-columns:170px 1fr; gap:9px 28px;
+  font-family:var(--font-mono); font-size:13px; line-height:1.5;
+  margin-top:clamp(40px,6vh,64px); padding-top:30px; border-top:1px solid var(--rule-2);
+  max-width:760px;
+}
+.cover-foot dt{ color:var(--ink-faint); text-transform:uppercase; letter-spacing:.08em; font-size:11px; }
+.cover-foot dd{ color:var(--ink); }
+@media(max-width:560px){ .cover-foot{ grid-template-columns:1fr; gap:2px; }
+  .cover-foot dt{ margin-top:14px; } }
+
+/* the latin gloss, set like a margin note on the cover */
+.gloss{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:.04em; color:var(--ink-faint);
+  margin-top:20px;
+}
+.gloss b{ color:var(--bite); font-weight:500; }
+
+/* ---------- scan strip ---------- */
+.scan{
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 28px;
+  padding:18px clamp(16px,4vw,40px); margin:clamp(40px,6vh,72px) 0 0;
+  border-top:1.5px solid var(--ink); border-bottom:1.5px solid var(--ink);
+  background:var(--paper-2);
+  font-family:var(--font-mono); font-size:13px; letter-spacing:.02em;
+  position:relative; z-index:2;
+}
+.scan .doc-name{ color:var(--ink); text-transform:uppercase; letter-spacing:.14em; font-size:11px; margin-right:auto; }
+.scan .tally{ display:inline-flex; align-items:baseline; gap:7px; }
+.scan .tally b{ font-size:18px; font-weight:500; }
+.scan .swatch{ width:9px; height:9px; display:inline-block; border-radius:1px; transform:translateY(0); }
+.swatch.bite{ background:var(--bite); }
+.swatch.caution{ background:var(--caution); }
+.swatch.standard{ background:var(--standard); }
+
+/* ---------- document grid: index | doc | flags ---------- */
+.doc-grid{
+  display:grid;
+  grid-template-columns:200px minmax(0,var(--col-doc)) 300px;
+  gap:clamp(28px,4vw,64px);
+  justify-content:center;
+  padding:clamp(48px,8vh,96px) 0 clamp(48px,8vh,96px);
+}
+
+/* clause index */
+.index{ position:sticky; top:var(--stick); align-self:start; font-family:var(--font-mono); }
+.index h3, .flags h3{
+  font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-faint);
+  margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--rule);
+}
+.index ol{ list-style:none; }
+.index li{ padding:5px 0; font-size:12.5px; }
+.index a{
+  color:var(--ink-soft); text-decoration:none; display:flex; gap:8px; transition:color .2s;
+  padding:7px 0;
+}
+.index a .n{ color:var(--ink-faint); }
+.index a:hover, .index a.active{ color:var(--ink); }
+.index a.active .n{ color:var(--bite); }
+
+/* the contract itself */
+.contract{ min-width:0; }
+.contract-head{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-faint); padding-bottom:14px; margin-bottom:30px; border-bottom:1px solid var(--rule-2);
+  display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+.clause{ margin-bottom:38px; scroll-margin-top:calc(var(--stick) + 12px); }
+.clause-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:8px; }
+.clause-num{ font-family:var(--font-mono); font-size:13px; color:var(--bite); flex:none; }
+.clause-title{ font-size:15px; letter-spacing:.12em; text-transform:uppercase; font-weight:500; }
+.clause p{ font-size:16px; line-height:1.66; color:var(--ink); text-align:left; }
+.clause p + p{ margin-top:12px; }
+
+/* flagged spans inside clauses */
+.flag-span{
+  cursor:pointer; position:relative; padding-bottom:1px;
+  background-image:linear-gradient(var(--c,var(--bite)),var(--c,var(--bite)));
+  background-repeat:no-repeat; background-position:0 100%;
+  background-size:100% 2px; transition:background-size .2s, background-color .2s;
+  border-radius:2px;
+}
+.flag-span[data-sev="bite"]{ --c:var(--bite); }
+.flag-span[data-sev="caution"]{ --c:var(--caution); }
+.flag-span:hover, .flag-span.lit, .flag-span:focus-visible{
+  background-color:color-mix(in srgb, var(--c) 16%, transparent);
+  background-size:100% 100%;
+}
+.flag-span:focus-visible{ outline:2px solid var(--c); outline-offset:2px; }
+/* marker: visible at all widths so touch users see the affordance; floats into the margin on desktop */
+.flag-span .marker{
+  font-family:var(--font-mono); font-size:11px; color:var(--c);
+  margin-left:3px; line-height:1; vertical-align:1px;
+}
+@media(min-width:1080px){
+  .flag-span .marker{ position:absolute; top:-2px; right:-16px; margin-left:0; }
+}
+
+/* redline edits */
+del.redline{
+  color:var(--bite); text-decoration:line-through; text-decoration-color:var(--bite);
+  opacity:0; transition:opacity .7s ease;
+}
+ins.redline{
+  color:var(--standard); text-decoration:none; opacity:0; transition:opacity .7s ease .15s;
+  border-bottom:1px solid var(--standard);
+}
+.clause.in-view del.redline, .clause.in-view ins.redline{ opacity:1; }
+
+/* flags rail */
+.flags{ position:sticky; top:var(--stick); align-self:start; max-height:calc(100vh - var(--stick) - 24px); overflow-y:auto;
+  scrollbar-width:thin; padding-right:4px; }
+.flag-card{
+  border-left:3px solid var(--c,var(--bite)); padding:12px 0 14px 14px; margin-bottom:14px;
+  cursor:pointer; transition:background .2s, transform .2s; border-radius:0 3px 3px 0;
+}
+.flag-card[data-sev="bite"]{ --c:var(--bite); border-left-width:5px; background:color-mix(in srgb,var(--bite) 7%,transparent); padding-top:14px; padding-bottom:16px; }
+.flag-card[data-sev="caution"]{ --c:var(--caution); }
+.flag-card[data-sev="standard"]{ --c:var(--standard); border-left-width:2px; opacity:.82; }
+.flag-card:hover, .flag-card.lit, .flag-card:focus-visible{ background:color-mix(in srgb,var(--c) 13%,transparent); opacity:1; }
+.flag-card:focus-visible{ outline:2px solid var(--c); outline-offset:2px; }
+.flag-card.lit{ transform:translateX(2px); }
+.flag-top{ display:flex; align-items:center; gap:8px; margin-bottom:6px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; }
+.flag-top .sev{ color:var(--c); font-weight:500; }
+.flag-card[data-sev="bite"] .flag-top .sev{ font-size:11.5px; letter-spacing:.14em; }
+.flag-top .ref{ color:var(--ink-faint); margin-left:auto; }
+.flag-card p{ font-size:14px; line-height:1.5; color:var(--ink-soft); }
+.flag-card[data-sev="bite"] p{ color:var(--ink); font-size:14.5px; }
+.flag-card p b{ color:var(--ink); font-weight:500; }
+
+@media(max-width:1079px){
+  .doc-grid{ grid-template-columns:1fr; }
+  .index{ display:none; }
+  .flags{ position:static; max-height:none; overflow:visible; margin-top:32px;
+    border-top:1.5px solid var(--ink); padding-top:24px; }
+  .flags h3{ font-size:12px; }
+}
+
+/* ---------- the checker ---------- */
+.checker-sec{ padding:clamp(60px,9vh,110px) 0; border-top:1.5px solid var(--ink); }
+.sec-label{ font-family:var(--font-mono); font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:var(--bite); margin-bottom:18px; }
+.sec-h{ font-family:var(--font-display); font-size:clamp(34px,5vw,60px); line-height:1.02; letter-spacing:-.01em; max-width:16ch; }
+.sec-sub{ font-size:18px; color:var(--ink-soft); max-width:54ch; margin-top:18px; font-weight:300; }
+
+.checker{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px,3vw,44px); margin-top:clamp(36px,5vh,56px); align-items:start; }
+@media(max-width:820px){ .checker{ grid-template-columns:1fr; } }
+.checker label{ font-family:var(--font-mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); display:block; margin-bottom:10px; }
+#clauseInput{
+  width:100%; min-height:200px; resize:vertical; background:var(--paper-2);
+  border:1px solid var(--rule-2); border-left:3px solid var(--ink);
+  color:var(--ink); font-family:var(--font-serif); font-size:16px; line-height:1.6; padding:18px 20px;
+}
+#clauseInput:focus{ outline:none; border-left-color:var(--bite); }
+.checker-actions{ display:flex; gap:12px; align-items:center; margin-top:16px; flex-wrap:wrap; }
+.btn{
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  padding:13px 22px; border:1.5px solid var(--ink); background:var(--ink); color:var(--paper);
+  cursor:pointer; transition:background .2s,color .2s;
+}
+.btn:hover{ background:transparent; color:var(--ink); }
+.btn.ghost{ background:transparent; color:var(--ink); }
+.btn.ghost:hover{ background:var(--ink); color:var(--paper); }
+.try-line{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); margin-top:16px; line-height:2.4; }
+.try-line a{ color:var(--bite); cursor:pointer; text-decoration:none; display:inline-block;
+  padding:7px 12px; margin:2px 4px 2px 0; border:1px solid color-mix(in srgb,var(--bite) 40%,transparent); border-radius:2px; }
+.try-line a:hover, .try-line a:focus-visible{ background:color-mix(in srgb,var(--bite) 10%,transparent); }
+
+.verdict{ border:1px solid var(--rule-2); min-height:200px; background:var(--paper); }
+.verdict-head{ display:flex; justify-content:space-between; align-items:baseline; padding:14px 18px; border-bottom:1px solid var(--rule-2); font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+.verdict-body{ padding:8px 18px 18px; }
+.verdict-empty{ padding:40px 18px; font-family:var(--font-mono); font-size:13px; color:var(--ink-faint); line-height:1.7; }
+.finding{ padding:16px 0 14px; border-bottom:1px solid var(--rule); }
+.finding:last-child{ border-bottom:none; }
+.finding-top{ display:flex; align-items:center; gap:10px; font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:7px; }
+.pill{ width:9px; height:9px; border-radius:1px; }
+.finding-top .sev{ font-weight:500; }
+.finding-top .matched{ color:var(--ink-faint); margin-left:auto; font-style:normal; }
+.finding p{ font-size:15px; line-height:1.55; color:var(--ink); }
+.finding p .hit{ background:color-mix(in srgb,var(--c) 22%,transparent); padding:0 2px; }
+.clean{ padding:24px 0; font-size:16px; color:var(--standard); }
+.disclaimer{ font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); line-height:1.7; margin-top:20px; max-width:60ch; }
+
+/* ---------- risk register table ---------- */
+.register-sec{ padding:clamp(60px,9vh,110px) 0; border-top:1.5px solid var(--ink); }
+.register{ width:100%; border-collapse:collapse; margin-top:clamp(34px,5vh,52px); font-size:15px; }
+.register th{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-faint); text-align:left; padding:0 14px 12px 0; border-bottom:1.5px solid var(--ink); font-weight:400;
+}
+.register td{ padding:16px 14px 16px 0; border-bottom:1px solid var(--rule); vertical-align:top; }
+.register tr:hover td{ background:color-mix(in srgb,var(--ink) 4%,transparent); }
+.register .reg-clause{ font-weight:500; width:26%; }
+.register .reg-sev{ font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; width:14%; }
+.register .reg-sev .pill{ display:inline-block; vertical-align:middle; margin-right:7px; }
+.register .reg-watch{ color:var(--ink-soft); font-size:14.5px; }
+@media(max-width:680px){
+  .register, .register tbody, .register tr, .register td{ display:block; width:100%; }
+  .register thead{ display:none; }
+  .register tr{ border-bottom:1.5px solid var(--rule-2); padding:8px 0; }
+  .register td{ border:none; padding:3px 0; }
+  .register .reg-clause{ font-size:17px; }
+}
+
+/* ---------- request brief ---------- */
+.brief-sec{ padding:clamp(60px,9vh,120px) 0 clamp(40px,6vh,72px); border-top:1.5px solid var(--ink); }
+.brief-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px,5vw,80px); margin-top:clamp(34px,5vh,52px); align-items:start; }
+@media(max-width:820px){ .brief-grid{ grid-template-columns:1fr; } }
+.brief-copy p{ font-size:18px; color:var(--ink-soft); font-weight:300; max-width:46ch; }
+.brief-copy p + p{ margin-top:16px; }
+.brief-note{ font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); letter-spacing:.04em; line-height:1.8; margin-top:28px; padding-top:20px; border-top:1px solid var(--rule); }
+.form-row{ margin-bottom:22px; }
+.form-row label{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); display:block; margin-bottom:8px; }
+.form-row input, .form-row select{
+  width:100%; background:transparent; border:none; border-bottom:1px solid var(--rule-2);
+  color:var(--ink); font-family:var(--font-serif); font-size:17px; padding:12px 2px;
+}
+.form-row input::placeholder{ color:var(--ink-faint); }
+.form-row input:focus, .form-row select:focus{ outline:none; border-bottom-color:var(--bite); }
+.form-two{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+@media(max-width:480px){ .form-two{ grid-template-columns:1fr; } }
+#briefMsg{ font-family:var(--font-mono); font-size:12px; color:var(--standard); margin-top:8px; min-height:18px; }
+
+/* ---------- doc footer ---------- */
+.colophon{ border-top:1.5px solid var(--ink); padding:clamp(48px,7vh,80px) 0 60px; }
+.colophon-grid{ display:grid; grid-template-columns:1.2fr 1fr; gap:clamp(28px,5vw,72px); }
+@media(max-width:720px){ .colophon-grid{ grid-template-columns:1fr; gap:36px; } }
+.colophon h4{ font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px; }
+.version-list{ list-style:none; font-family:var(--font-mono); font-size:13px; }
+.version-list li{ padding:8px 0; border-bottom:1px solid var(--rule); display:flex; gap:12px; }
+.version-list time{ color:var(--ink-faint); flex:none; }
+.colophon p{ font-size:15px; color:var(--ink-soft); line-height:1.6; }
+.colophon .fineprint{ font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); line-height:1.8; margin-top:18px; }
+.colophon .endmark{ font-family:var(--font-display); font-size:13px; letter-spacing:.3em; text-transform:uppercase; color:var(--ink-faint); margin-top:44px; text-align:center; }
+.colophon .endmark .dot{ color:var(--bite); }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <div class="b-left">
+    <span class="seal">C</span>
+    <span>Caveat · Contract Intelligence</span>
+  </div>
+  <div class="b-right">Demonstration document · not legal advice</div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===== COVER SHEET ===== -->
+  <header class="cover">
+    <div class="cover-kicker">Caveat emptor → caveat lēctor</div>
+    <h1 class="wordmark">Caveat<span class="dot">.</span></h1>
+    <p class="cover-line">The fine print, read for you. Every clause that <em>bites</em> — flagged before you sign.</p>
+    <p class="gloss"><b>cavēre</b> — Latin, "to beware." A caveat is a formal warning entered in the margin so no one can later say they weren't told.</p>
+
+    <dl class="cover-foot">
+      <dt>What it does</dt><dd>Reads a contract end to end and marks the clauses that move risk onto you</dd>
+      <dt>What it reads</dt><dd>MSAs, NDAs, SaaS terms, leases, employment & vendor agreements, SOWs</dd>
+      <dt>How it returns</dt><dd>Your document, annotated in the margin — severity, plain-English note, suggested redline</dd>
+      <dt>Built for</dt><dd>Founders, ops, procurement, and anyone who signs without counsel in the room</dd>
+      <dt>Turnaround</dt><dd>A first-pass margin scan in under a minute; a full read in minutes, not days</dd>
+    </dl>
+  </header>
+</div>
+
+<!-- ===== SCAN STRIP ===== -->
+<div class="scan">
+  <span class="doc-name">Specimen — Master Services Agreement v2.1</span>
+  <span class="tally"><span class="swatch bite"></span> <b id="t-bite">0</b> that bite</span>
+  <span class="tally"><span class="swatch caution"></span> <b id="t-caution">0</b> to watch</span>
+  <span class="tally"><span class="swatch standard"></span> <b id="t-standard">0</b> market-standard</span>
+</div>
+
+<div class="wrap">
+  <!-- ===== THE ANNOTATED CONTRACT ===== -->
+  <div class="doc-grid">
+
+    <!-- clause index -->
+    <nav class="index" aria-label="Clause index">
+      <h3>Clauses</h3>
+      <ol id="indexList">
+        <li><a href="#c1"><span class="n">1</span> Term &amp; Renewal</a></li>
+        <li><a href="#c2"><span class="n">2</span> Fees &amp; Increases</a></li>
+        <li><a href="#c3"><span class="n">3</span> Limitation of Liability</a></li>
+        <li><a href="#c4"><span class="n">4</span> Indemnification</a></li>
+        <li><a href="#c5"><span class="n">5</span> Intellectual Property</a></li>
+        <li><a href="#c6"><span class="n">6</span> Termination</a></li>
+        <li><a href="#c7"><span class="n">7</span> Governing Law</a></li>
+      </ol>
+    </nav>
+
+    <!-- the document body -->
+    <article class="contract">
+      <div class="contract-head">
+        <span>Master Services Agreement</span>
+        <span>Annotated by Caveat · 7 flags</span>
+      </div>
+
+      <section class="clause" id="c1">
+        <div class="clause-head"><span class="clause-num">§1</span><h2 class="clause-title">Term &amp; Renewal</h2></div>
+        <p>This Agreement commences on the Effective Date and continues for an initial term of twelve (12) months. Thereafter it shall <span class="flag-span" data-sev="bite" data-flag="f1">automatically renew for successive twelve-month terms unless either party gives written notice of non-renewal no fewer than ninety (90) days prior to the end of the then-current term<span class="marker">⚑</span></span>.</p>
+      </section>
+
+      <section class="clause" id="c2">
+        <div class="clause-head"><span class="clause-num">§2</span><h2 class="clause-title">Fees &amp; Increases</h2></div>
+        <p>Customer shall pay the fees set out in the applicable Order Form. <span class="flag-span" data-sev="caution" data-flag="f2">Provider may increase fees upon renewal by providing notice, with increases not to exceed the greater of 7% or the change in CPI<span class="marker">⚑</span></span>. Invoices are due net thirty (30) days; overdue amounts accrue interest at 1.5% per month.</p>
+      </section>
+
+      <section class="clause" id="c3">
+        <div class="clause-head"><span class="clause-num">§3</span><h2 class="clause-title">Limitation of Liability</h2></div>
+        <p>Except for the excluded claims below, <span class="flag-span" data-sev="bite" data-flag="f3">each party's total aggregate liability shall not exceed the fees paid in the three (3) months preceding the claim<span class="marker">⚑</span></span>. <span class="flag-span" data-sev="bite" data-flag="f4">In no event shall Provider be liable for any indirect, incidental, or consequential damages, including loss of data, even if advised of the possibility<span class="marker">⚑</span></span>.</p>
+      </section>
+
+      <section class="clause" id="c4">
+        <div class="clause-head"><span class="clause-num">§4</span><h2 class="clause-title">Indemnification</h2></div>
+        <p><span class="flag-span" data-sev="bite" data-flag="f5">Customer shall defend, indemnify, and hold harmless Provider from any and all claims arising out of Customer's use of the Services, without limitation<span class="marker">⚑</span></span>. Provider's indemnity, by contrast, is capped at the liability ceiling in §3 and
+        <del class="redline">excludes claims relating to data handling</del> <ins class="redline">should expressly cover IP and data-handling claims</ins>.</p>
+      </section>
+
+      <section class="clause" id="c5">
+        <div class="clause-head"><span class="clause-num">§5</span><h2 class="clause-title">Intellectual Property</h2></div>
+        <p>Provider retains all right, title, and interest in the Services. <span class="flag-span" data-sev="caution" data-flag="f6">Customer grants Provider a perpetual, irrevocable, royalty-free license to use Customer data, in aggregated and de-identified form, to improve the Services<span class="marker">⚑</span></span>.</p>
+      </section>
+
+      <section class="clause" id="c6">
+        <div class="clause-head"><span class="clause-num">§6</span><h2 class="clause-title">Termination</h2></div>
+        <p>Either party may terminate for material breach uncured after thirty (30) days' written notice. <span class="flag-span" data-sev="standard" data-flag="f7">Upon termination, Customer may export its data for a period of thirty (30) days, after which Provider may delete it<span class="marker">⚑</span></span>. Sections 3, 4, and 5 survive termination.</p>
+      </section>
+
+      <section class="clause" id="c7">
+        <div class="clause-head"><span class="clause-num">§7</span><h2 class="clause-title">Governing Law</h2></div>
+        <p>This Agreement is governed by the laws of the State of Delaware, without regard to conflict-of-laws principles. The parties consent to the exclusive jurisdiction of the state and federal courts located in Wilmington, Delaware.</p>
+      </section>
+    </article>
+
+    <!-- flags rail -->
+    <aside class="flags" aria-label="Caveat's flags">
+      <h3>Caveat's notes</h3>
+      <div id="flagList">
+        <div class="flag-card" data-sev="bite" data-flag="f1">
+          <div class="flag-top"><span class="pill" style="background:var(--bite)"></span><span class="sev">Bites</span><span class="ref">§1</span></div>
+          <p><b>Auto-renewal with a 90-day window.</b> You're locked in for another year unless you remember to cancel three months early. Calendar it the day you sign, or negotiate the notice down to 30 days.</p>
+        </div>
+        <div class="flag-card" data-sev="caution" data-flag="f2">
+          <div class="flag-top"><span class="pill" style="background:var(--caution)"></span><span class="sev">Watch</span><span class="ref">§2</span></div>
+          <p><b>Uncapped-ish price increases.</b> "Greater of 7% or CPI" means the floor is 7%, not the ceiling. Ask for a hard cap and a fixed first-renewal price.</p>
+        </div>
+        <div class="flag-card" data-sev="bite" data-flag="f3">
+          <div class="flag-top"><span class="pill" style="background:var(--bite)"></span><span class="sev">Bites</span><span class="ref">§3</span></div>
+          <p><b>Liability capped at 3 months of fees.</b> If something goes badly wrong, your recovery is tiny relative to the harm. Push for 12 months of fees, at minimum.</p>
+        </div>
+        <div class="flag-card" data-sev="bite" data-flag="f4">
+          <div class="flag-top"><span class="pill" style="background:var(--bite)"></span><span class="sev">Bites</span><span class="ref">§3</span></div>
+          <p><b>Consequential damages excluded — including data loss.</b> If their failure wipes your data, this clause says you can't claim the downstream cost. Carve data loss out of the exclusion.</p>
+        </div>
+        <div class="flag-card" data-sev="bite" data-flag="f5">
+          <div class="flag-top"><span class="pill" style="background:var(--bite)"></span><span class="sev">Bites</span><span class="ref">§4</span></div>
+          <p><b>One-way, uncapped indemnity.</b> You defend them "without limitation"; their indemnity is capped. Make it mutual and subject to the same cap.</p>
+        </div>
+        <div class="flag-card" data-sev="caution" data-flag="f6">
+          <div class="flag-top"><span class="pill" style="background:var(--caution)"></span><span class="sev">Watch</span><span class="ref">§5</span></div>
+          <p><b>Perpetual license to your data.</b> Aggregated and de-identified is common, but "perpetual, irrevocable" survives termination forever. Confirm the de-identification standard and a deletion right.</p>
+        </div>
+        <div class="flag-card" data-sev="standard" data-flag="f7">
+          <div class="flag-top"><span class="pill" style="background:var(--standard)"></span><span class="sev">Standard</span><span class="ref">§6</span></div>
+          <p><b>30-day export window.</b> Market-standard. Fine as written — just diarise the export deadline so you don't lose the data.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ===== CLAUSE CHECKER ===== -->
+<div class="wrap">
+  <section class="checker-sec" id="checker">
+    <div class="sec-label">Try it · pattern preview</div>
+    <h2 class="sec-h">Paste a clause. See what bites.</h2>
+    <p class="sec-sub">This is a lightweight, in-browser preview — it flags well-known risk patterns by phrasing. The real Caveat reads the whole document in context. Same instinct, far deeper.</p>
+
+    <div class="checker">
+      <div>
+        <label for="clauseInput">Clause text</label>
+        <textarea id="clauseInput" placeholder="Paste a sentence or a paragraph from any contract…"></textarea>
+        <div class="checker-actions">
+          <button class="btn" id="runBtn">Read it</button>
+          <button class="btn ghost" id="clearBtn">Clear</button>
+        </div>
+        <p class="try-line">Try a known biter:
+          <a data-sample="renew">auto-renewal</a> ·
+          <a data-sample="liab">liability cap</a> ·
+          <a data-sample="indem">one-way indemnity</a> ·
+          <a data-sample="ip">perpetual IP license</a>
+        </p>
+      </div>
+
+      <div class="verdict">
+        <div class="verdict-head"><span>Caveat reads</span><span id="verdictCount">—</span></div>
+        <div class="verdict-body" id="verdictBody">
+          <div class="verdict-empty">No text yet. Paste a clause and press <b>Read it</b> — or tap a sample above. Caveat marks each finding by severity, quotes the phrase that triggered it, and tells you what to ask for.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="disclaimer">This preview matches surface phrasing only and is intentionally simple. It is not legal advice, does not capture cross-references or context, and should not be relied on for a signing decision. For anything you're about to sign, have a qualified lawyer review it.</p>
+  </section>
+</div>
+
+<!-- ===== RISK REGISTER ===== -->
+<div class="wrap">
+  <section class="register-sec" id="register">
+    <div class="sec-label">The register</div>
+    <h2 class="sec-h">The clauses that quietly move risk onto you.</h2>
+    <table class="register">
+      <thead>
+        <tr><th class="reg-clause">Clause</th><th class="reg-sev">Default severity</th><th class="reg-watch">What Caveat watches for</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="reg-clause">Auto-renewal</td><td class="reg-sev"><span class="pill" style="background:var(--bite)"></span>Bites</td><td class="reg-watch">Long notice windows, silent rollovers, renewal-only price hikes.</td></tr>
+        <tr><td class="reg-clause">Limitation of liability</td><td class="reg-sev"><span class="pill" style="background:var(--bite)"></span>Bites</td><td class="reg-watch">Caps set at a few months of fees, consequential-damage and data-loss carve-outs.</td></tr>
+        <tr><td class="reg-clause">Indemnification</td><td class="reg-sev"><span class="pill" style="background:var(--bite)"></span>Bites</td><td class="reg-watch">One-way duties, "without limitation," defence obligations larger than the cap.</td></tr>
+        <tr><td class="reg-clause">Unilateral amendment</td><td class="reg-sev"><span class="pill" style="background:var(--bite)"></span>Bites</td><td class="reg-watch">"We may modify these terms at any time" with deemed acceptance on continued use.</td></tr>
+        <tr><td class="reg-clause">IP &amp; data license</td><td class="reg-sev"><span class="pill" style="background:var(--caution)"></span>Watch</td><td class="reg-watch">Perpetual, irrevocable grants; vague de-identification; training-on-your-data rights.</td></tr>
+        <tr><td class="reg-clause">Exclusivity / non-solicit</td><td class="reg-sev"><span class="pill" style="background:var(--caution)"></span>Watch</td><td class="reg-watch">Broad scope, no geography or time limit, hidden inside boilerplate.</td></tr>
+        <tr><td class="reg-clause">Assignment &amp; change of control</td><td class="reg-sev"><span class="pill" style="background:var(--caution)"></span>Watch</td><td class="reg-watch">They can assign freely; you cannot — even in an acquisition.</td></tr>
+        <tr><td class="reg-clause">Governing law &amp; venue</td><td class="reg-sev"><span class="pill" style="background:var(--standard)"></span>Standard</td><td class="reg-watch">Inconvenient forums; arbitration clauses that waive class claims.</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<!-- ===== REQUEST ACCESS BRIEF ===== -->
+<div class="wrap">
+  <section class="brief-sec" id="brief">
+    <div class="sec-label">Before you sign</div>
+    <h2 class="sec-h">Run your first contract through Caveat.</h2>
+    <div class="brief-grid">
+      <div class="brief-copy">
+        <p>Send one agreement you're about to sign. Caveat returns it annotated — every clause that bites, in the margin, with what to ask for instead.</p>
+        <p>No account to set up to see the first read. We'll tell you what we found, then you decide whether the full document review is worth it.</p>
+        <p class="brief-note">Placeholders below — wire to your own backend, form handler, or inbox. Nothing is transmitted from this demonstration page.</p>
+      </div>
+
+      <form id="briefForm" novalidate>
+        <div class="form-row">
+          <label for="bf-name">Name</label>
+          <input id="bf-name" type="text" placeholder="Your name" />
+        </div>
+        <div class="form-two">
+          <div class="form-row">
+            <label for="bf-email">Work email</label>
+            <input id="bf-email" type="email" placeholder="you@company.com" />
+          </div>
+          <div class="form-row">
+            <label for="bf-type">Document type</label>
+            <select id="bf-type">
+              <option>MSA / Services agreement</option>
+              <option>NDA</option>
+              <option>SaaS / Subscription terms</option>
+              <option>Employment / Contractor</option>
+              <option>Lease</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="bf-context">What worries you about it? (optional)</label>
+          <input id="bf-context" type="text" placeholder="e.g. the liability cap feels low, auto-renews, vendor won't budge" />
+        </div>
+        <div class="checker-actions">
+          <button class="btn" type="submit">Request a margin read</button>
+        </div>
+        <p id="briefMsg" role="status"></p>
+      </form>
+    </div>
+  </section>
+</div>
+
+<!-- ===== COLOPHON ===== -->
+<div class="wrap">
+  <footer class="colophon">
+    <div class="colophon-grid">
+      <div>
+        <h4>Method &amp; standing</h4>
+        <p>The specimen above is an illustrative Master Services Agreement, drafted for demonstration. Annotations show how Caveat marks risk; they are not advice about any real agreement. Caveat surfaces and explains clauses — it does not replace a lawyer, and on anything material, it tells you to get one.</p>
+        <p class="fineprint">Demonstration document · single-page build · no data leaves the browser · not legal advice · "Caveat" wordmark and copy are placeholders for your brand.</p>
+      </div>
+      <div>
+        <h4>Version history</h4>
+        <ul class="version-list">
+          <li><time>v2.1</time><span>Added uncapped indemnity flag (§4) and data-loss carve-out note (§3)</span></li>
+          <li><time>v2.0</time><span>Reworked severity into bites / watch / standard; added clause register</span></li>
+          <li><time>v1.0</time><span>Initial annotated specimen and in-browser clause preview</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="endmark">Caveat lēctor<span class="dot">.</span></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- tally the scan strip from the DOM ---- */
+  (function tally(){
+    var counts = { bite:0, caution:0, standard:0 };
+    document.querySelectorAll('.flag-card').forEach(function(c){
+      var s = c.getAttribute('data-sev'); if(counts[s]!=null) counts[s]++;
+    });
+    var ease = function(id, target){
+      var el = document.getElementById(id); if(!el) return;
+      if(reduce){ el.textContent = target; return; }
+      var n = 0, step = Math.max(1, Math.round(target/14));
+      var t = setInterval(function(){
+        n += step; if(n>=target){ n=target; clearInterval(t); }
+        el.textContent = n;
+      }, 45);
+    };
+    // run when scan strip is in view
+    var strip = document.querySelector('.scan'); var fired=false;
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting && !fired){ fired=true;
+          ease('t-bite', counts.bite); ease('t-caution', counts.caution); ease('t-standard', counts.standard);
+        }
+      });
+    }, {threshold:.6});
+    if(strip) io.observe(strip);
+  })();
+
+  /* ---- link flagged spans <-> flag cards (mouse + keyboard + touch) ---- */
+  function byFlag(sel, id){ return document.querySelector(sel+'[data-flag="'+id+'"]'); }
+  var sevName = { bite:'flagged \u2014 this clause bites', caution:'flagged \u2014 watch this clause', standard:'market-standard clause' };
+  function onActivate(el, fn){
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' ' || e.key==='Spacebar'){ e.preventDefault(); fn(); }
+    });
+  }
+  function goTo(el){ if(el) el.scrollIntoView({behavior: reduce?'auto':'smooth', block:'center'}); }
+
+  document.querySelectorAll('.flag-span').forEach(function(span){
+    var id = span.getAttribute('data-flag');
+    var card = byFlag('.flag-card', id);
+    var sev = span.getAttribute('data-sev');
+    if(card && !card.id){ card.id = 'note-' + (id || ''); }
+    span.setAttribute('role','button');
+    span.setAttribute('tabindex','0');
+    span.setAttribute('aria-label', (sevName[sev]||'flagged clause') + ' \u2014 open Caveat\u2019s note');
+    if(card && card.id){ span.setAttribute('aria-describedby', card.id); }
+    function lite(on){ span.classList.toggle('lit', on); if(card) card.classList.toggle('lit', on); }
+    span.addEventListener('mouseenter', function(){ lite(true); });
+    span.addEventListener('mouseleave', function(){ lite(false); });
+    span.addEventListener('focus', function(){ lite(true); });
+    span.addEventListener('blur', function(){ lite(false); });
+    onActivate(span, function(){ goTo(card); });
+  });
+  document.querySelectorAll('.flag-card').forEach(function(card, i){
+    var id = card.getAttribute('data-flag');
+    var span = byFlag('.flag-span', id);
+    if(!card.id){ card.id = 'note-' + (id || i); }
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.setAttribute('aria-label', 'Caveat note \u2014 jump to this clause in the document');
+    function lite(on){ card.classList.toggle('lit', on); if(span) span.classList.toggle('lit', on); }
+    card.addEventListener('mouseenter', function(){ lite(true); });
+    card.addEventListener('mouseleave', function(){ lite(false); });
+    card.addEventListener('focus', function(){ lite(true); });
+    card.addEventListener('blur', function(){ lite(false); });
+    onActivate(card, function(){ goTo(span); });
+  });
+
+  /* ---- clause index active state + redline reveal ---- */
+  var clauses = Array.prototype.slice.call(document.querySelectorAll('.clause'));
+  var links = {};
+  document.querySelectorAll('#indexList a').forEach(function(a){
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  var io2 = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      var id = e.target.id;
+      if(e.isIntersecting){
+        e.target.classList.add('in-view');
+        Object.keys(links).forEach(function(k){ links[k].classList.toggle('active', k===id); });
+      }
+    });
+  }, {rootMargin:'-30% 0px -55% 0px'});
+  clauses.forEach(function(c){ io2.observe(c); });
+
+  /* ---- clause checker (honest, pattern-based preview) ---- */
+  var RULES = [
+    { sev:'bite', label:'Auto-renewal',
+      re:/(auto(?:matic|matically)?\s*(?:renew|renewal)|renew(?:s|al)?\s+(?:automatically|for successive))/i,
+      note:'Auto-renewal. You\u2019re re-committed unless you cancel inside the notice window. Diarise the deadline the day you sign, or shorten the window.' },
+    { sev:'bite', label:'Long notice window',
+      re:/(?:no(?:t)?\s*(?:fewer|less)\s*than|at least)\s*(?:\d{2,3}|ninety|sixty)\s*(?:\(\d+\)\s*)?days/i,
+      note:'A long cancellation notice (60\u201390+ days). Easy to miss; that\u2019s the point. Ask for 30 days.' },
+    { sev:'bite', label:'Low liability cap',
+      re:/(?:liability|liable)[^.]{0,80}(?:not exceed|shall not exceed|limited to|capped)[^.]{0,60}(?:fees|amounts)[^.]{0,40}(?:three|3|six|6|one|1|twelve)\s*(?:\(\d+\)\s*)?month/i,
+      note:'Liability capped at a short run of fees. Recovery may be far smaller than the harm. Push the cap to 12 months, with carve-outs above the cap.' },
+    { sev:'bite', label:'Consequential-damages exclusion',
+      re:/(?:no event|not be liable)[^.]{0,120}(?:indirect|incidental|consequential|special)[^.]{0,80}damages/i,
+      note:'Excludes consequential/indirect damages. If it also swallows data loss or lost profits, carve those back out.' },
+    { sev:'bite', label:'Data-loss exclusion',
+      re:/(?:loss of (?:data|profits|revenue|business)|data loss)/i,
+      note:'Specifically excludes loss of data/profits. If their failure causes it, you can\u2019t claim the downstream cost. Carve it out of the exclusion.' },
+    { sev:'bite', label:'One-way / uncapped indemnity',
+      re:/(?:defend,?\s*indemnif(?:y|ication)|indemnif(?:y|ication))[^.]{0,140}(?:without limitation|hold harmless|any and all)/i,
+      note:'A broad indemnity (\u201cany and all,\u201d \u201cwithout limitation\u201d). Make it mutual and subject to the same liability cap.' },
+    { sev:'caution', label:'Perpetual / irrevocable grant',
+      re:/(perpetual|irrevocable|in perpetuity)/i,
+      note:'A perpetual or irrevocable right \u2014 it survives termination forever. Confirm exactly what\u2019s granted and add a deletion right.' },
+    { sev:'caution', label:'Rights to your data',
+      re:/(license to use [^.]{0,40}data|use (?:customer|your) data|train(?:ing)? (?:on|its models))/i,
+      note:'A license over your data. \u201cAggregated and de-identified\u201d is common, but pin down the standard and whether it\u2019s used to train models.' },
+    { sev:'bite', label:'Unilateral amendment',
+      re:/(?:may (?:modify|amend|change|update)[^.]{0,80}(?:at any time|these terms|this agreement)|continued use[^.]{0,40}(?:constitutes|deemed) acceptance)/i,
+      note:'They can change the terms unilaterally, often with \u201ccontinued use = acceptance.\u201d Ask for notice and a right to reject changes.' },
+    { sev:'caution', label:'Exclusivity / non-solicit',
+      re:/(exclusiv(?:e|ity)|non-?solicit|shall not (?:hire|solicit)|no(?:n)?-?compete)/i,
+      note:'A restraint on who you can work with or hire. Check scope, geography and duration \u2014 broad ones are unenforceable in some places and costly everywhere.' },
+    { sev:'caution', label:'Late-payment interest',
+      re:/(\d+(?:\.\d+)?\s*%\s*per\s*month|interest[^.]{0,30}per month)/i,
+      note:'Monthly interest on overdue amounts (e.g. 1.5%/mo \u2248 18%+/yr). Confirm it only runs on undisputed invoices.' }
+  ];
+
+  function escapeHtml(s){ return s.replace(/[&<>"]/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+  var sevColor = { bite:'var(--bite)', caution:'var(--caution)', standard:'var(--standard)' };
+  var sevWord  = { bite:'Bites', caution:'Watch', standard:'Standard' };
+
+  function read(text){
+    var body = document.getElementById('verdictBody');
+    var countEl = document.getElementById('verdictCount');
+    text = (text||'').trim();
+    if(!text){
+      body.innerHTML = '<div class="verdict-empty">No text yet. Paste a clause and press <b>Read it</b> \u2014 or tap a sample above.</div>';
+      countEl.textContent = '\u2014'; return;
+    }
+    var findings = [];
+    RULES.forEach(function(r){
+      var m = r.re.exec(text);
+      if(m){ findings.push({ sev:r.sev, label:r.label, note:r.note, hit:m[0] }); }
+    });
+    // de-dup by label
+    var seen = {}; findings = findings.filter(function(f){ if(seen[f.label]) return false; seen[f.label]=true; return true; });
+    // order: bite first
+    var rank = { bite:0, caution:1, standard:2 };
+    findings.sort(function(a,b){ return rank[a.sev]-rank[b.sev]; });
+
+    if(!findings.length){
+      countEl.textContent = '0 flags';
+      body.innerHTML = '<div class="clean">Nothing in Caveat\u2019s known-risk patterns matched. That is <b>not</b> a clean bill of health \u2014 the preview only catches familiar phrasings, and the riskiest clauses are often the ones written to look harmless.</div>';
+      return;
+    }
+    var bites = findings.filter(function(f){return f.sev==='bite';}).length;
+    countEl.textContent = findings.length + (findings.length===1?' flag':' flags') + (bites?(' \u00b7 '+bites+' bite'+(bites>1?'s':'')):'');
+
+    var html = findings.map(function(f){
+      var c = sevColor[f.sev];
+      // highlight the matched phrase inside the original text snippet
+      var safeHit = escapeHtml(f.hit);
+      return '<div class="finding" style="--c:'+c+'">'
+        + '<div class="finding-top"><span class="pill" style="background:'+c+'"></span>'
+        + '<span class="sev" style="color:'+c+'">'+sevWord[f.sev]+'</span>'
+        + '<span class="matched">'+escapeHtml(f.label)+'</span></div>'
+        + '<p>'+f.note+'</p>'
+        + '<p style="margin-top:8px;font-size:13.5px;color:var(--ink-faint)">Triggered by: \u201c<span class="hit" style="--c:'+c+'">'+ (safeHit.length>90?safeHit.slice(0,90)+'\u2026':safeHit) +'</span>\u201d</p>'
+        + '</div>';
+    }).join('');
+    body.innerHTML = html;
+  }
+
+  var SAMPLES = {
+    renew: 'This Agreement shall automatically renew for successive twelve-month terms unless either party gives written notice of non-renewal no fewer than ninety (90) days prior to the end of the then-current term.',
+    liab:  'In no event shall Provider be liable for any indirect, incidental, or consequential damages, including loss of data; each party\u2019s total aggregate liability shall not exceed the fees paid in the three (3) months preceding the claim.',
+    indem: 'Customer shall defend, indemnify, and hold harmless Provider from any and all claims arising out of Customer\u2019s use of the Services, without limitation.',
+    ip:    'Customer grants Provider a perpetual, irrevocable, royalty-free license to use Customer data to improve and train its models. Provider may modify these terms at any time, and continued use constitutes acceptance.'
+  };
+
+  var input = document.getElementById('clauseInput');
+  document.getElementById('runBtn').addEventListener('click', function(){ read(input.value); });
+  document.getElementById('clearBtn').addEventListener('click', function(){ input.value=''; read(''); input.focus(); });
+  document.querySelectorAll('[data-sample]').forEach(function(a){
+    a.setAttribute('role','button');
+    a.setAttribute('tabindex','0');
+    function fire(){
+      input.value = SAMPLES[a.getAttribute('data-sample')] || '';
+      read(input.value);
+      document.getElementById('checker').scrollIntoView({behavior: reduce?'auto':'smooth', block:'start'});
+    }
+    a.addEventListener('click', fire);
+    a.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' ' || e.key==='Spacebar'){ e.preventDefault(); fire(); }
+    });
+  });
+
+  /* ---- request brief (client-side only) ---- */
+  document.getElementById('briefForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('bf-name').value.trim();
+    var email = document.getElementById('bf-email').value.trim();
+    var msg = document.getElementById('briefMsg');
+    if(!name || !email || email.indexOf('@')<0){
+      msg.style.color = 'var(--bite)';
+      msg.textContent = 'Add a name and a valid work email to request a read.';
+      return;
+    }
+    msg.style.color = 'var(--standard)';
+    msg.textContent = 'Logged (demo only) \u2014 wire this form to your handler to receive the request.';
+    this.reset();
+  });
+})();
+</script>
+</body>
+</html>
