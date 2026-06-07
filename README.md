@@ -226,8 +226,15 @@ This is a demonstration interface. It does not provide legal advice and should n
 
 ## License
 
-This project is provided as a design and front-end demonstration. Add your preferred license before publishing or selling it.
+This project is proprietary.
 
+Copyright © 2026 Namish Gupta. All Rights Reserved.
+
+You may not copy, modify, redistribute, resell, sublicense, or use this project
+for commercial purposes without prior written permission from the owner.
+
+This project is not open source. Public access to this repository or live website
+does not grant permission to reuse the code, design, assets, or content.
 ---
 
 ## Credits
